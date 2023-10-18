@@ -1,0 +1,7 @@
+{
+  "name": "staticcheck",
+  "sdk": "go",
+  "dependencies": [
+    "github.com/jpadams/daggerverse/goVersion@289dee982ad4dc86aada9b76feb02e387ca83ee8"
+  ]
+}

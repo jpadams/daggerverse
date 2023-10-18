@@ -1,0 +1,8 @@
+{
+  "name": "drupalTest",
+  "sdk": "go",
+  "dependencies": [
+    "github.com/jpadams/daggerverse/drupal@687eda1df9ec2e72187365d6142adfec4e8b4485",
+    "github.com/jpadams/daggerverse/mariadb@552d439f15073b62054c46f5e072be6d18b74c90"
+  ]
+}
