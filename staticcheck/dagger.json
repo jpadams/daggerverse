@@ -2,6 +2,6 @@
   "name": "staticcheck",
   "sdk": "go",
   "dependencies": [
-    "github.com/jpadams/daggerverse/goVersion@289dee982ad4dc86aada9b76feb02e387ca83ee8"
+    "github.com/jpadams/daggerverse/goVersion@68b6243b2e981126dbd397d836776573efae0d6e"
   ]
 }
