@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"strconv"
 )
@@ -9,8 +10,11 @@ import (
 type Trivy struct {}
 
 // Pull the official trivy image.
-func (t *Trivy) Base() (*Container) {
-	return dag.Container().From("aquasec/trivy:latest")
+func (t *Trivy) Base(trivyImageTag string) (*Container) {
+	if trivyImageTag == "" {
+        trivyImageTag = "latest"
+    }
+	return dag.Container().From(fmt.Sprintf("aquasec/trivy:%s", trivyImageTag))
 }
 
 // Use an image ref for the container image to scan.
@@ -19,12 +23,14 @@ func (t *Trivy) ScanImage(
 	imageRef string,
 	severity Optional[string],
 	exitCode Optional[int],
-	format Optional[string]) (string, error) {
+	format Optional[string],
+	trivyImageTag Optional[string]) (string, error) {
 
 	sv := severity.GetOr("UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL")
 	ec := exitCode.GetOr(0)
 	ft := format.GetOr("table") 
-	return t.Base().
+	tag := trivyImageTag.GetOr("latest") 
+	return t.Base(tag).
         WithExec([]string{"image", "--quiet", "--severity", sv, "--exit-code", strconv.Itoa(ec), "--format", ft, imageRef}).Stdout(ctx)
 }
 
@@ -34,7 +40,8 @@ func (t *Trivy) ScanContainer(
 	ctr *Container,
 	severity Optional[string],
 	exitCode Optional[int],
-	format Optional[string]) (string, error) {
+	format Optional[string],
+	trivyImageTag Optional[string]) (string, error) {
 
 	sv := severity.GetOr("UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL")
 	ec := exitCode.GetOr(0)
@@ -45,7 +52,8 @@ func (t *Trivy) ScanContainer(
 	if success != true || err != nil {
 		return "", err	
 	}
-	return t.Base().
+	tag := trivyImageTag.GetOr("latest") 
+	return t.Base(tag).
 		WithMountedFile(tar, dag.Host().File(tar)).
 		WithExec([]string{"image",  "--quiet", "--severity", sv, "--exit-code", strconv.Itoa(ec), "--format", ft, "--input", tar}).Stdout(ctx)
 }
