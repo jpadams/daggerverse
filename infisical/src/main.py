@@ -1,13 +1,13 @@
 import os
 import dagger
-from dagger.mod import function
+from dagger import dag, function
 from infisical import InfisicalClient
 
 @function
 async def get_secret(name: str, token: dagger.Secret, env: str, path: str) -> dagger.Secret:
     """Get a secret from an Infisical project using secret name, project token, env, and path"""
     inf_client = InfisicalClient(token=await token.plaintext())
-    return dagger.set_secret("val", inf_client.get_secret(name, environment=env, path=path).secret_value)
+    return dag.set_secret("val", inf_client.get_secret(name, environment=env, path=path).secret_value)
 
 @function
 async def test(token: str) -> str:
@@ -15,7 +15,7 @@ async def test(token: str) -> str:
     return await dagger.Secret.plaintext(
         await get_secret(
             name="DATABASE_URL",
-            token=dagger.set_secret("tok", token),
+            token=dag.set_secret("tok", token),
              env="dev",
              path="/")
          )
