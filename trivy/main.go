@@ -1,3 +1,5 @@
+// Finds vulnerabilities from container image ref or Dagger Container
+
 package main
 
 import (
