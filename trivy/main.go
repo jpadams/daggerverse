@@ -3,57 +3,60 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
 	"strconv"
 )
 
 type Trivy struct {}
 
-// Pull the official trivy image.
-func (t *Trivy) Base(trivyImageTag string) (*Container) {
-	if trivyImageTag == "" {
-        trivyImageTag = "latest"
-    }
+// Return a Container from the official trivy image.
+func (t *Trivy) Base(
+	// +optional
+	// +default=latest
+	trivyImageTag string,
+) (*Container) {
 	return dag.Container().From(fmt.Sprintf("aquasec/trivy:%s", trivyImageTag))
 }
 
-// Use an image ref for the container image to scan.
+// Scan an image ref.
 func (t *Trivy) ScanImage(
 	ctx context.Context,
 	imageRef string,
-	severity Optional[string],
-	exitCode Optional[int],
-	format Optional[string],
-	trivyImageTag Optional[string]) (string, error) {
-
-	sv := severity.GetOr("UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL")
-	ec := exitCode.GetOr(0)
-	ft := format.GetOr("table") 
-	tag := trivyImageTag.GetOr("latest") 
-	return t.Base(tag).
-        WithExec([]string{"image", "--quiet", "--severity", sv, "--exit-code", strconv.Itoa(ec), "--format", ft, imageRef}).Stdout(ctx)
+	// +optional
+	// +default=UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
+	severity string,
+	// +optional
+	// +default=0
+	exitCode int,
+	// +optional
+	// +default=table
+	format string,
+	// +optional
+	// +default=latest
+	trivyImageTag string,
+) (string, error) {
+	return t.Base(trivyImageTag).
+        WithExec([]string{"image", "--quiet", "--severity", severity, "--exit-code", strconv.Itoa(exitCode), "--format", format, imageRef}).Stdout(ctx)
 }
 
 // Scan a Dagger Container.
 func (t *Trivy) ScanContainer(
 	ctx context.Context,
 	ctr *Container,
-	severity Optional[string],
-	exitCode Optional[int],
-	format Optional[string],
-	trivyImageTag Optional[string]) (string, error) {
-
-	sv := severity.GetOr("UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL")
-	ec := exitCode.GetOr(0)
-	ft := format.GetOr("table") 
-	tmp, _ := os.CreateTemp("", "image-trivy-scan-dagger.*.tar")
-	tar := tmp.Name()
-	success, err := ctr.Export(ctx, tar)
-	if success != true || err != nil {
-		return "", err	
-	}
-	tag := trivyImageTag.GetOr("latest") 
-	return t.Base(tag).
-		WithMountedFile(tar, dag.Host().File(tar)).
-		WithExec([]string{"image",  "--quiet", "--severity", sv, "--exit-code", strconv.Itoa(ec), "--format", ft, "--input", tar}).Stdout(ctx)
+	// +optional
+	// +default=UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
+	severity string,
+	// +optional
+	// +default=0
+	exitCode int,
+	// +optional
+	// +default=table
+	format string,
+	// +optional
+	// +default=latest
+	trivyImageTag string,
+) (string, error) {
+	ref, _ := ctr.ImageRef(ctx)
+	return t.Base(trivyImageTag).
+		WithMountedFile("/scan/"+ref, ctr.AsTarball()).
+		WithExec([]string{"image",  "--quiet", "--severity", severity, "--exit-code", strconv.Itoa(exitCode), "--format", format, "--input", "/scan/"+ref}).Stdout(ctx)
 }
