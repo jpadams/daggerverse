@@ -16,7 +16,9 @@ func (t *Trivy) Base(
 	// +default=latest
 	trivyImageTag string,
 ) (*Container) {
-	return dag.Container().From(fmt.Sprintf("aquasec/trivy:%s", trivyImageTag))
+	return dag.Container().
+		From(fmt.Sprintf("aquasec/trivy:%s", trivyImageTag)).
+		WithMountedCache("/root/.cache/trivy", dag.CacheVolume("trivy-db-cache"))
 }
 
 // Scan an image ref.
