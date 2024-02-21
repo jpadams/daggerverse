@@ -13,7 +13,7 @@ type Trivy struct {}
 // Return a Container from the official trivy image.
 func (t *Trivy) Base(
 	// +optional
-	// +default=latest
+	// +default="latest"
 	trivyImageTag string,
 ) (*Container) {
 	return dag.Container().
@@ -26,16 +26,16 @@ func (t *Trivy) ScanImage(
 	ctx context.Context,
 	imageRef string,
 	// +optional
-	// +default=UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
+	// +default="UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL"
 	severity string,
 	// +optional
 	// +default=0
 	exitCode int,
 	// +optional
-	// +default=table
+	// +default="table"
 	format string,
 	// +optional
-	// +default=latest
+	// +default="latest"
 	trivyImageTag string,
 ) (string, error) {
 	return t.Base(trivyImageTag).
@@ -47,16 +47,16 @@ func (t *Trivy) ScanContainer(
 	ctx context.Context,
 	ctr *Container,
 	// +optional
-	// +default=UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
+	// +default="UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL"
 	severity string,
 	// +optional
 	// +default=0
 	exitCode int,
 	// +optional
-	// +default=table
+	// +default="table"
 	format string,
 	// +optional
-	// +default=latest
+	// +default="latest"
 	trivyImageTag string,
 ) (string, error) {
 	ref, _ := ctr.ImageRef(ctx)
