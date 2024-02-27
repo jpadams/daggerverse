@@ -2,5 +2,5 @@
 name = "main"
 version = "0.0.0"
 dependencies = [
-  'infisical>=2.1.5' 
+  'infisical-python>=2.1.8'
 ]

@@ -1,4 +1,6 @@
 {
   "name": "infisical",
-  "sdk": "python"
+  "sdk": "python",
+  "source": ".",
+  "engineVersion": "v0.9.11"
 }
