@@ -4,7 +4,7 @@ type MariaDb struct {}
 
 func (m *MariaDb) AsService() (*Service) {
 	return dag.Container().
-        From("mariadb:10.11.2").
+        From("mariadb:10.11.4").
         WithEnvVariable("MARIADB_USER", "user").
         WithEnvVariable("MARIADB_PASSWORD", "password").
         WithEnvVariable("MARIADB_DATABASE", "drupal").
