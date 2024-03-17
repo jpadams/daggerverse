@@ -13,15 +13,25 @@ we explicitly specify that the container that we load the cli into should be
 linux/amd64.
 """
 
+
 import time
+
+import typing
+from typing import Annotated
+
 import dagger
-from dagger import dag, function, object_type
+from dagger import Doc, dag, function, object_type
+
 
 
 @object_type
 class Fossa:
     @function
-    async def analyze(self, source: dagger.Directory, fossa_token: dagger.Secret | None) -> str:
+    async def analyze(
+        self,
+        source: Annotated[dagger.Directory, Doc("Required source code dir")],
+        fossa_token: Annotated[dagger.Secret, Doc("Optional Fossa token")] |  None,
+    ) -> str:
         """Analyzes a directory of source code, prints to stdout, optionally uploads results to Fossa"""
         ctr = self.base()
         ctr = ctr.with_mounted_directory("/src", source).with_workdir("/src")
