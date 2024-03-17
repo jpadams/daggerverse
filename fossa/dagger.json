@@ -1,4 +1,6 @@
 {
   "name": "fossa",
-  "sdk": "python"
+  "sdk": "python",
+  "source": "dagger",
+  "engineVersion": "v0.10.2"
 }
