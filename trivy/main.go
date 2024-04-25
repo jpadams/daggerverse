@@ -47,6 +47,9 @@ func (t *Trivy) ScanContainer(
 	ctx context.Context,
 	ctr *Container,
 	// +optional
+	// +default="user-provided-container:latest"
+	imageRef,
+	// +optional
 	// +default="UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL"
 	severity string,
 	// +optional
@@ -59,8 +62,7 @@ func (t *Trivy) ScanContainer(
 	// +default="latest"
 	trivyImageTag string,
 ) (string, error) {
-	ref, _ := ctr.ImageRef(ctx)
 	return t.Base(trivyImageTag).
-		WithMountedFile("/scan/"+ref, ctr.AsTarball()).
-		WithExec([]string{"image",  "--quiet", "--severity", severity, "--exit-code", strconv.Itoa(exitCode), "--format", format, "--input", "/scan/"+ref}).Stdout(ctx)
+		WithMountedFile("/scan/"+imageRef, ctr.AsTarball()).
+		WithExec([]string{"image",  "--quiet", "--severity", severity, "--exit-code", strconv.Itoa(exitCode), "--format", format, "--input", "/scan/"+imageRef}).Stdout(ctx)
 }
