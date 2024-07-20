@@ -6,16 +6,17 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"trivy/internal/dagger"
 )
 
-type Trivy struct {}
+type Trivy struct{}
 
 // Return a Container from the official trivy image.
 func (t *Trivy) Base(
 	// +optional
 	// +default="latest"
 	trivyImageTag string,
-) (*Container) {
+) *dagger.Container {
 	return dag.Container().
 		From(fmt.Sprintf("aquasec/trivy:%s", trivyImageTag)).
 		WithMountedCache("/root/.cache/trivy", dag.CacheVolume("trivy-db-cache"))
@@ -39,13 +40,13 @@ func (t *Trivy) ScanImage(
 	trivyImageTag string,
 ) (string, error) {
 	return t.Base(trivyImageTag).
-        WithExec([]string{"image", "--quiet", "--severity", severity, "--exit-code", strconv.Itoa(exitCode), "--format", format, imageRef}).Stdout(ctx)
+		WithExec([]string{"trivy", "image", "--quiet", "--severity", severity, "--exit-code", strconv.Itoa(exitCode), "--format", format, imageRef}).Stdout(ctx)
 }
 
 // Scan a Dagger Container.
 func (t *Trivy) ScanContainer(
 	ctx context.Context,
-	ctr *Container,
+	ctr *dagger.Container,
 	// +optional
 	// +default="user-provided-container:latest"
 	imageRef,
@@ -64,5 +65,5 @@ func (t *Trivy) ScanContainer(
 ) (string, error) {
 	return t.Base(trivyImageTag).
 		WithMountedFile("/scan/"+imageRef, ctr.AsTarball()).
-		WithExec([]string{"image",  "--quiet", "--severity", severity, "--exit-code", strconv.Itoa(exitCode), "--format", format, "--input", "/scan/"+imageRef}).Stdout(ctx)
+		WithExec([]string{"trivy", "image", "--quiet", "--severity", severity, "--exit-code", strconv.Itoa(exitCode), "--format", format, "--input", "/scan/" + imageRef}).Stdout(ctx)
 }
