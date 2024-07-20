@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"hello-secret/internal/dagger"
 	"strings"
 )
 
@@ -10,16 +11,16 @@ import (
 // with a secret greeting ;) Original version:
 // github.com/shykes/daggerverse/helloWorld
 type HelloSecret struct {
-	Greeting *Secret
+	Greeting *dagger.Secret
 	Name     string
 }
 
-func (m *HelloSecret) MyFunction(ctx context.Context, stringArg string) (*Container, error) {
+func (m *HelloSecret) MyFunction(ctx context.Context, stringArg string) (*dagger.Container, error) {
 	return dag.Container().From("alpine:latest").WithExec([]string{"echo", stringArg}).Sync(ctx)
 }
 
 // Change the greeting
-func (hello *HelloSecret) WithGreeting(greeting *Secret) *HelloSecret {
+func (hello *HelloSecret) WithGreeting(greeting *dagger.Secret) *HelloSecret {
 	hello.Greeting = greeting
 	return hello
 }
