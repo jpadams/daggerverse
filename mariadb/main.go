@@ -1,14 +1,16 @@
 package main
 
-type MariaDb struct {}
+import "maria-db/internal/dagger"
 
-func (m *MariaDb) AsService() (*Service) {
+type MariaDb struct{}
+
+func (m *MariaDb) AsService() *dagger.Service {
 	return dag.Container().
-        From("mariadb:10.11.4").
-        WithEnvVariable("MARIADB_USER", "user").
-        WithEnvVariable("MARIADB_PASSWORD", "password").
-        WithEnvVariable("MARIADB_DATABASE", "drupal").
-        WithEnvVariable("MARIADB_ROOT_PASSWORD", "root").
-        WithExposedPort(3306).
-        AsService()
+		From("mariadb:10.11.4").
+		WithEnvVariable("MARIADB_USER", "user").
+		WithEnvVariable("MARIADB_PASSWORD", "password").
+		WithEnvVariable("MARIADB_DATABASE", "drupal").
+		WithEnvVariable("MARIADB_ROOT_PASSWORD", "root").
+		WithExposedPort(3306).
+		AsService()
 }

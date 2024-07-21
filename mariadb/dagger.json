@@ -1,4 +1,6 @@
 {
   "name": "mariaDB",
-  "sdk": "go"
+  "sdk": "go",
+  "source": ".",
+  "engineVersion": "v0.12.1"
 }
