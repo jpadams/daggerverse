@@ -2,7 +2,15 @@
   "name": "drupalTest",
   "sdk": "go",
   "dependencies": [
-    "github.com/jpadams/daggerverse/drupal@e5470174bfd86b9858dd5fd3db381835b579a5b4",
-    "github.com/jpadams/daggerverse/mariadb@e5470174bfd86b9858dd5fd3db381835b579a5b4"
-  ]
+    {
+      "name": "drupal",
+      "source": "github.com/jpadams/daggerverse/drupal@ed92308855ec44437608ae0437ec5849ebeeceee"
+    },
+    {
+      "name": "mariaDB",
+      "source": "github.com/jpadams/daggerverse/mariadb@115f735fed712c6d4ddc52247a2d51631fe4add2"
+    }
+  ],
+  "source": ".",
+  "engineVersion": "v0.12.1"
 }
