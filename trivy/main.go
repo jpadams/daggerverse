@@ -9,6 +9,9 @@ import (
 	"trivy/internal/dagger"
 )
 
+// Wrapper for Trivy CLI
+// Scans container images for vulnerabilities
+// Uses official Trivy image
 type Trivy struct{}
 
 // Return a Container from the official trivy image.
