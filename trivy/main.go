@@ -43,7 +43,9 @@ func (t *Trivy) ScanImage(
 	trivyImageTag string,
 ) (string, error) {
 	return t.Base(trivyImageTag).
-		WithExec([]string{"trivy", "image", "--quiet", "--severity", severity, "--exit-code", strconv.Itoa(exitCode), "--format", format, imageRef}).Stdout(ctx)
+		WithExec([]string{"trivy", "image", "--quiet", "--severity", severity, "--exit-code", strconv.Itoa(exitCode), "--format", format, imageRef},
+			dagger.ContainerWithExecOpts{UseEntrypoint: false},
+		).Stdout(ctx)
 }
 
 // Scan a Dagger Container.
@@ -68,5 +70,8 @@ func (t *Trivy) ScanContainer(
 ) (string, error) {
 	return t.Base(trivyImageTag).
 		WithMountedFile("/scan/"+imageRef, ctr.AsTarball()).
-		WithExec([]string{"trivy", "image", "--quiet", "--severity", severity, "--exit-code", strconv.Itoa(exitCode), "--format", format, "--input", "/scan/" + imageRef}).Stdout(ctx)
+		WithExec([]string{"trivy", "image", "--quiet", "--severity", severity, "--exit-code", strconv.Itoa(exitCode), "--format", format, "--input", "/scan/" + imageRef},
+			dagger.ContainerWithExecOpts{UseEntrypoint: false},
+		).
+		Stdout(ctx)
 }

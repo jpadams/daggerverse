@@ -1,6 +1,6 @@
 {
   "name": "trivy",
-  "engineVersion": "v0.18.5",
+  "engineVersion": "v0.18.8",
   "sdk": {
     "source": "go"
   }
